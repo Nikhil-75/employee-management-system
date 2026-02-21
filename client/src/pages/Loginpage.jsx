@@ -4,14 +4,18 @@ import { toast } from "react-hot-toast";
 import * as yup from "yup";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { HiRefresh } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CustomLoaderButton from "../components/CustomLoaderButton";
-
+import { useMainContext } from "../context/MainContext";
+import { axiosClient } from "../utils/axiosClient";
 
 const Loginpage = () => {
   const [isShow, setIsShow] = React.useState(false);
-  const [captcha, setCaptcha] = useState('')
+  const [captcha, setCaptcha] = useState("");
   const [isLoading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const { fetchUserProfile } = useMainContext();
   const initialValues = {
     email: "",
     password: "",
@@ -31,33 +35,38 @@ const Loginpage = () => {
     try {
       setLoading(true);
       //validate captcha
-      if(values.captcha != eval(captcha)){
+      if (values.captcha != eval(captcha)) {
         toast.error("Enter Valid Captcha");
         return;
       }
+
+      delete values.captcha;
+      const response = await axiosClient.post("/login", values);
+      const data = await response.data;
+      localStorage.setItem("token", data.token);
+      toast.success(data.message);
+      await fetchUserProfile();
+      helpers.resetForm();
+      navigate("/");
       toast.success("Success");
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.response?.data?.error || error.message);
     } finally {
       setLoading(false);
     }
   };
 
-let CaptchaOperators = ['+','-','*','/'];
-  const generateCaptcha = () =>{
-
-
-    let str = `${Math.floor(Math.random() *100)}
+  let CaptchaOperators = ["+", "-"];
+  const generateCaptcha = () => {
+    let str = `${Math.floor(Math.random() * 100)}
     ${CaptchaOperators[Math.floor(Math.random() * CaptchaOperators.length)]}
-    ${Math.floor(Math.random() *100)}`
-    setCaptcha(str)
-  }
+    ${Math.floor(Math.random() * 100)}`;
+    setCaptcha(str);
+  };
 
-  useEffect(() =>{
-    generateCaptcha()
-  },[])
-
-
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center flex-col">
@@ -117,11 +126,16 @@ let CaptchaOperators = ['+','-','*','/'];
 
           <div className="flex mb-3 items-center justify-between">
             <p className="text-center w-1/2">{captcha}</p>
-            <button onClick={generateCaptcha} type="button" className="text-center w-1/2">
-            <HiRefresh />
+            <button
+              onClick={generateCaptcha}
+              type="button"
+              className="text-center w-1/2"
+            >
+              <HiRefresh />
             </button>
             <div className="flex flex-col w-full">
-              <Field placeholder='Enter Captcha'
+              <Field
+                placeholder="Enter Captcha"
                 name="captcha"
                 className="w-full py-2 border placeholder:font-pmedium
             border-gray-500 font-pbold rounded px-3 outline-none"
@@ -138,12 +152,14 @@ let CaptchaOperators = ['+','-','*','/'];
             <CustomLoaderButton isLoading={isLoading} text="Login" />
           </div>
 
-         <div className="md-3">
+          <div className="md-3">
             <p className="text-end">
-             Don’t have an account ? <Link to={"/register"} className = 
-              'font-psmbold text-indigo-500'>Register</Link>
+              Don’t have an account ?{" "}
+              <Link to={"/register"} className="font-psmbold text-indigo-500">
+                Register
+              </Link>
             </p>
-         </div>
+          </div>
         </Form>
       </Formik>
     </div>

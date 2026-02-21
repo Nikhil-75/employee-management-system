@@ -5,12 +5,18 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ProtectedLayout from "./layout/ProtectedLayout";
+
 const App = () => {
   return (
     <>
       <Navbar />
       <Routes>
-        <Route path="/" Component={DashboardPage} />
+
+       <Route Component={ProtectedLayout} >
+           <Route path="/" Component={DashboardPage} />
+       </Route>
+
         <Route path="/login" Component={Loginpage} />
         <Route path="/register" Component={RegisterPage} />
       </Routes>
