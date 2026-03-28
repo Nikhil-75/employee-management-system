@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { MainContextProvider } from "./context/mainContext";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+//import { Toaster } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(

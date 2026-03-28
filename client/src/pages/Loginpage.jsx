@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { HiRefresh } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import CustomLoaderButton from "../components/CustomLoaderButton";
-import { useMainContext } from "../context/MainContext";
+import { useMainContext } from "../context/mainContext";
 import { axiosClient } from "../utils/axiosClient";
 
 const Loginpage = () => {
@@ -167,3 +167,5 @@ const Loginpage = () => {
 };
 
 export default Loginpage;
+
+

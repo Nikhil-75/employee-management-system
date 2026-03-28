@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 
 import LogoComponents from "./LogoComponents";
 import { useMainContext } from "../context/mainContext";
-import { selectUser } from "../slice/auth.slice";
+import { AuthSlicePath } from "../redux/slice/auth.slice";
+
 
 const Navbar = () => {
-  const user = useSelector(selectUser);
+  const user = useSelector(AuthSlicePath);
   const { logoutHandler } = useMainContext();
 
   return (

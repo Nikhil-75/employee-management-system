@@ -2,14 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { axiosClient } from "../utils/axiosClient";
 
 import ScreenLoaderComponent from "../components/ScreenLoaderComponent";
-import { axiosClient } from "../utils/axiosClient";
-import { setUser, removeUser } from "../slice/auth.slice";
+import { setUser, removeUser } from "../redux/slice/auth.slice";
 
-const MainContext = createContext();
+const mainContext = createContext();
 
-export const useMainContext = () => useContext(MainContext);
+export const useMainContext = () => useContext(mainContext);
 
 export const MainContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -18,16 +18,16 @@ export const MainContextProvider = ({ children }) => {
 
   const logoutHandler = () => {
     localStorage.removeItem("token");
-    dispatch(setUser(null));
+    dispatch(removeUser());
     navigate("/login");
     toast.success("Logout successful");
   };
 
   const fetchUserProfile = async () => {
     try {
-      setLoading(true);
-
       const token = localStorage.getItem("token") || "";
+
+      // ✅ FIX HERE
       if (!token) {
         setLoading(false);
         return;
@@ -41,7 +41,7 @@ export const MainContextProvider = ({ children }) => {
 
       dispatch(setUser(response.data));
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -56,9 +56,10 @@ export const MainContextProvider = ({ children }) => {
   }
 
   return (
-    <MainContext.Provider value={{ fetchUserProfile, logoutHandler }}>
+    <mainContext.Provider value={{ fetchUserProfile, logoutHandler }}>
       {children}
-    </MainContext.Provider>
+    </mainContext.Provider>
   );
 };
- 
+
+

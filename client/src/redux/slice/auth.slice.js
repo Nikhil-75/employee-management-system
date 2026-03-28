@@ -17,4 +17,6 @@ export const AuthSlice = createSlice({
 
 export const { setUser, removeUser } = AuthSlice.actions;
 
-export const selectUser = (state) => state.AuthSlice.user;
+// export const selectUser = (state) => state.AuthSlice.user;
+
+export const AuthSlicePath = (store) => store.AuthSlice.user;
